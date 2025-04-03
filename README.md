@@ -1,105 +1,82 @@
-Funpar: Parallelized Image Processing in Rust
+# Funpar: Parallelized Image Processing in Rust
 
-This project will be applying a Rust-based image processing tool that applies filters like blur, sharpen, and brightness adjustments (lightening or darkening) while also using concurrent programming to run way faster than traditional single-threaded programs.
+This project applies a **Rust-based image processing tool** that applies filters like **blur, sharpen, and brightness adjustments** (lightening or darkening) while also using **concurrent programming** to run way faster than traditional single-threaded programs.
 
-How to Use It
+## How to Use It
 
-Find the main file: Go to /project/src/main.rs. This is where the magic happens.
+### 1. Find the main file:
+Go to `/project/src/main.rs`. This is where the magic happens.
 
-Set your image path: Assign your image's file path to the variable s so the program knows what to process.
+### 2. Set your image path:
+Assign your image's file path to the variable `s` so the program knows what to process.
 
-Run the program: Either press the run button in your editor or compile and execute it from the terminal.
+### 3. Run the program:
+Either press the **Run** button in your editor or **compile and execute** it from the terminal.
 
-Wait for processing:
+### 4. Wait for processing:
+- The program will **apply all filters in order**.
+- The processed images will be **saved outside the `src` folder**.
 
-The program will apply all filters in order.
+### 5. Tweak the filters:
+- Adjust **`blur_radius`** to control the blur strength.
+- Adjust **`brightening_factor`** to lighten the image.
+- Adjust **`darkening_factor`** to darken it.
 
-The processed images will be saved outside the src folder.
+## Filters & Performance Breakdown
 
-Tweak the filters:
+### **Blur Filter**
 
-Adjust blur_radius to control the blur strength.
+**What it does:** Makes the image smoother by averaging nearby colors.
 
-Adjust brightening_factor to lighten the image.
+**How it works:**
+- Loops through each pixel and blends it with surrounding ones based on **`blur_radius`**.
+- More blur = more calculations.
 
-Adjust darkening_factor to darken it.
+**Performance:**
+- Loops over all pixels: **O(w × h)**
+- Blending neighbors: **O((2 × blur_radius + 1)²)**
+- **Total Complexity:** O(w × h × (2 × blur_radius + 1)²)
+- **Parallelization:** Uses **Rayon** to distribute computations across multiple threads.
 
-Filters & Performance Breakdown
+### **Sharpen Filter**
 
-Blur Filter
+**What it does:** Enhances edges and details in the image.
 
-What it does: Makes the image smoother by averaging nearby colors.
+**How it works:**
+- Uses a **3x3 kernel** to tweak each pixel.
 
-How it works:
+**Performance:**
+- Loops through all pixels: **O(w × h)**
+- Applies kernel: **O(1)**
+- **Total Complexity:** O(w × h)
+- **Parallelization:** Processed using **Rayon** for improved efficiency.
 
-Loops through each pixel and blends it with surrounding ones based on blur_radius.
+### **Darken Filter**
 
-More blur = more calculations.
+**What it does:** Makes the image darker.
 
-Performance:
+**How it works:**
+- Multiplies pixel **RGB values** by a darkening factor.
 
-Loops over all pixels: O(w × h)
+**Performance:**
+- Loops through all pixels: **O(w × h)**
+- Adjusts RGB values: **O(1)**
+- **Total Complexity:** O(w × h)
+- **Parallelization:** Runs in parallel to accelerate execution.
 
-Blending neighbors: O((2 × blur_radius + 1)²)
+### **Brighten Filter**
 
-Total Complexity: O(w × h × (2 × blur_radius + 1)²)
+**What it does:** Makes the image brighter.
 
-Parallelization: Uses Rayon to distribute computations across multiple threads.
+**How it works:**
+- Multiplies pixel **RGB values** by a brightening factor.
 
-Sharpen Filter
+**Performance:**
+- Loops through all pixels: **O(w × h)**
+- Adjusts RGB values: **O(1)**
+- **Total Complexity:** O(w × h)
+- **Parallelization:** Uses **multi-threading** for faster processing.
 
-What it does: Enhances edges and details in the image.
+## Wrapping Up:
+**Parallelization** makes image processing **fast** by leveraging **Rust’s Rayon library**. Whether you’re **blurring, sharpening, or adjusting brightness**, it processes images **way quicker** than traditional methods. Plus, you can **fine-tune the filters easily**!
 
-How it works:
-
-Uses a 3x3 kernel to tweak each pixel.
-
-Performance:
-
-Loops through all pixels: O(w × h)
-
-Applies kernel: O(1)
-
-Total Complexity: O(w × h)
-
-Parallelization: Processed using Rayon for improved efficiency.
-
-Darken Filter
-
-What it does: Makes the image darker.
-
-How it works:
-
-Multiplies pixel RGB values by a darkening factor.
-
-Performance:
-
-Loops through all pixels: O(w × h)
-
-Adjusts RGB values: O(1)
-
-Total Complexity: O(w × h)
-
-Parallelization: Runs in parallel to accelerate execution.
-
-Brighten Filter
-
-What it does: Makes the image brighter.
-
-How it works:
-
-Multiplies pixel RGB values by a brightening factor.
-
-Performance:
-
-Loops through all pixels: O(w × h)
-
-Adjusts RGB values: O(1)
-
-Total Complexity: O(w × h)
-
-Parallelization: Uses multi-threading for faster processing.
-
-Wrapping Up:
-
-Parallel makes image processing fast by leveraging Rust’s Rayon library. Whether you’re blurring, sharpening, or adjusting brightness, it processes images way quicker than traditional methods. Plus, you can fine-tune the filters easily!
